@@ -1,0 +1,56 @@
+
+CREATE TABLE IF NOT EXISTS users (
+id INT(10) NOT NULL AUTO_INCREMENT,
+email VARCHAR(100) COLLATE utf8_unicode_ci,
+fullname VARCHAR(100) COLLATE utf8_unicode_ci,
+username VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
+password VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
+is_authorization BOOLEAN DEFAULT FALSE,
+PRIMARY KEY (id),
+UNIQUE KEY username (username)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS blog (
+id INT(10) NOT NULL AUTO_INCREMENT,
+title VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
+author INT(10) NOT NULL,
+PRIMARY KEY (id),
+UNIQUE KEY title (author),
+CONSTRAINT author_id_key_blog FOREIGN KEY (author) REFERENCES users (id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS post (
+id INT(10) NOT NULL AUTO_INCREMENT,
+title VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
+author INT(10) NOT NULL,
+description VARCHAR(4096) COLLATE utf8_unicode_ci NOT NULL,
+time_created DATETIME NOT NULL,
+PRIMARY KEY (id),
+UNIQUE KEY title_blog (title),
+CONSTRAINT author_id_key_post FOREIGN KEY (author) REFERENCES users (id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS comments (
+id INT(10) NOT NULL AUTO_INCREMENT,
+author INT(10) NOT NULL,
+time_created DATETIME NOT NULL,
+post_id INT(10),
+comment_id INT(10),
+description VARCHAR(4096) COLLATE utf8_unicode_ci NOT NULL,
+PRIMARY KEY (id),
+CONSTRAINT author_id_key_comments FOREIGN KEY (author) REFERENCES users (id),
+CONSTRAINT post_id_key_comments FOREIGN KEY (post_id) REFERENCES post (id),
+CONSTRAINT comment_id_key_comments FOREIGN KEY (post_id) REFERENCES post (id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS connect_blog_post (
+id INT(10) NOT NULL AUTO_INCREMENT,
+post_id INT(10) NOT NULL,
+blog_id INT(10) NOT NULL,
+PRIMARY KEY (id),
+CONSTRAINT FOREIGN KEY (post_id) REFERENCES post (id),
+CONSTRAINT FOREIGN KEY (blog_id) REFERENCES blog (id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
